@@ -161,7 +161,7 @@ func postToWebhook(platform, webhookURL, message string) error {
 			continue
 		}
 
-		if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
 			return fmt.Errorf("webhook request failed with status: %d", resp.StatusCode)
 		}
 
