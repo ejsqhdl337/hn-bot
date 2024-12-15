@@ -1,4 +1,4 @@
-# Hacker News Bot (Go Version)
+# Dead Simple Hacker News Bot (Go Version)
 
 A robust Go application that fetches top stories from Hacker News and posts them to Discord and Slack channels via webhooks. The bot features persistent storage options and is containerized for easy deployment.
 
@@ -13,7 +13,6 @@ A robust Go application that fetches top stories from Hacker News and posts them
 
 ## Prerequisites
 
-- Go 1.23 or higher (for local development)
 - Docker (for containerized deployment)
 - Discord and/or Slack webhook URLs
 
@@ -21,57 +20,13 @@ A robust Go application that fetches top stories from Hacker News and posts them
 
 The application is configured via environment variables:
 
-|
-Variable
-|
-Description
-|
-Default
-|
-|
-
----
-
-## |
-
-## |
-
-|
-|
-`DISCORD_WEBHOOK_URL`
-|
-Discord channel webhook URL
-|
-""
-|
-|
-`SLACK_WEBHOOK_URL`
-|
-Slack channel webhook URL
-|
-""
-|
-|
-`SCHEDULE_PERIOD`
-|
-Posting frequency in minutes
-|
-60
-|
-|
-`FETCH_TOP_STORIES_AMOUNT`
-|
-Number of stories to fetch per interval
-|
-5
-|
-|
-`STORAGE`
-|
-Storage type ("local" or "database")
-|
-"local"
-|
+| Variable                   | Description                             | Default |
+| -------------------------- | --------------------------------------- | ------- |
+| `DISCORD_WEBHOOK_URL`      | Discord channel webhook URL             |         |
+| `SLACK_WEBHOOK_URL`        | Slack channel webhook URL               |         |
+| `SCHEDULE_PERIOD`          | Posting frequency in minutes            | 60      |
+| `FETCH_TOP_STORIES_AMOUNT` | Number of stories to fetch per interval | 5       |
+| `STORAGE`                  | Storage type ("local" or "database")    | "local" |
 
 ## Running Locally
 
