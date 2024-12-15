@@ -121,6 +121,7 @@ docker run -d \
   -e SCHEDULE_PERIOD=60 \
   -e FETCH_TOP_STORIES_AMOUNT=5 \
   -e STORAGE=local \
+  --name hn-bot \
   hn-bot
 ```
 

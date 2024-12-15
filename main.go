@@ -147,16 +147,29 @@ func postToWebhook(platform, webhookURL, message string) error {
 		return err
 	}
 
-	resp, err := http.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
+	var resp *http.Response
+	for attempts := 0; attempts < 3; attempts++ {
+		resp, err = http.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("webhook request failed with status: %d", resp.StatusCode)
+		if resp.StatusCode == http.StatusTooManyRequests {
+			log.Printf("Received 429 Too Many Requests, retrying in 1 second...")
+			time.Sleep(time.Minute)
+			continue
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("webhook request failed with status: %d", resp.StatusCode)
+		}
+
+		log.Printf("Posting to webhook URL: %s with payload: %s", webhookURL, string(jsonData))
+		return nil
 	}
-	return nil
+
+	return fmt.Errorf("failed to post to webhook after multiple attempts")
 }
 
 func fetchAndPostNews(config Config, storage Storage) error {
@@ -203,14 +216,14 @@ func fetchAndPostNews(config Config, storage Storage) error {
 
 			var message string
 			if platform == "discord" {
-				message = fmt.Sprintf("**%s**\n%s", story.Title, story.URL)
+				message = fmt.Sprintf("[**%s**](%s)    [(comment)](%s)", story.Title, story.URL, "https://news.ycombinator.com/item?id="+strconv.Itoa(story.ID))
 			} else {
 				message = fmt.Sprintf("%s\n%s", story.Title, story.URL)
 			}
 
 			if err := postToWebhook(platform, webhookURL, message); err != nil {
 				log.Printf("Error posting to %s: %v", platform, err)
-				continue
+				return err
 			}
 
 			if err := storage.SavePostedStory(platform, strconv.Itoa(storyID)); err != nil {
